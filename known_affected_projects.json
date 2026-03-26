@@ -1,0 +1,62 @@
+{
+  "rules": [
+    {
+      "label": "google/adk-python",
+      "repo_slugs": ["google/adk-python"],
+      "dir_names": ["adk-python"]
+    },
+    {
+      "label": "stanfordnlp/dspy",
+      "repo_slugs": ["stanfordnlp/dspy"],
+      "dir_names": ["dspy"]
+    },
+    {
+      "label": "OpenHands/OpenHands",
+      "repo_slugs": ["openhands/openhands"],
+      "dir_names": ["openhands"]
+    },
+    {
+      "label": "guardrails-ai/guardrails",
+      "repo_slugs": ["guardrails-ai/guardrails"],
+      "dir_names": ["guardrails"]
+    },
+    {
+      "label": "unclecode/crawl4ai",
+      "repo_slugs": ["unclecode/crawl4ai"],
+      "dir_names": ["crawl4ai"]
+    },
+    {
+      "label": "neuml/txtai",
+      "repo_slugs": ["neuml/txtai"],
+      "dir_names": ["txtai"]
+    },
+    {
+      "label": "microsoft/agent-framework",
+      "repo_slugs": ["microsoft/agent-framework"],
+      "dir_names": ["agent-framework"]
+    },
+    {
+      "label": "getsentry/sentry-python",
+      "repo_slugs": ["getsentry/sentry-python"],
+      "dir_names": ["sentry-python"]
+    },
+    {
+      "label": "astronomer/astronomer-cosmos",
+      "repo_slugs": ["astronomer/astronomer-cosmos"],
+      "dir_names": ["astronomer-cosmos"]
+    },
+    {
+      "label": "UKGovernmentBEIS/control-arena",
+      "repo_slugs": ["ukgovernmentbeis/control-arena"],
+      "dir_names": ["control-arena"]
+    },
+    {
+      "label": "notebook-intelligence/<truncated-from-user-list>",
+      "owner_prefixes": ["notebook-intelligence"]
+    }
+  ],
+  "ignore_paths": [],
+  "ignore_repo_slugs": [],
+  "ignore_dir_names": [],
+  "ignore_owner_prefixes": []
+}
