@@ -68,9 +68,11 @@ All report formats include:
 
 ## Severity Levels
 
-- `critical`: known IOC or impacted installed version
+- `critical`: known IOC or any detected reference to LiteLLM `1.82.7` or `1.82.8`
 - `medium`: suspicious historical evidence that should be reviewed
 - `info`: LiteLLM was present, but no known IOC matched
+
+This means the scanner now escalates `1.82.7` and `1.82.8` to `critical` not only for installed packages, but also when they appear in dependency files, caches, shell history, or Docker metadata.
 
 Exit codes:
 

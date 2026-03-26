@@ -709,7 +709,7 @@ def scan_dependency_files(roots: Sequence[Path], report: ScanReport) -> None:
                 text = safe_read_text(path)
                 if not text or not LITELLM_RE.search(text):
                     continue
-                severity = "medium"
+                severity = "critical"
                 detail = "Dependency file references LiteLLM"
                 if LITELLM_IMPACTED_RE.search(text):
                     detail = "Dependency file references impacted LiteLLM version 1.82.7 or 1.82.8"
@@ -768,7 +768,7 @@ def scan_caches(roots: Sequence[Path], report: ScanReport) -> None:
         impacted = sorted(version for version in versions if version in IMPACTED_VERSIONS)
         if impacted:
             report.add_finding(
-                "medium",
+                "critical",
                 "cache_artifact",
                 Path(root_str),
                 "Cache contains impacted LiteLLM versions: {}".format(", ".join(impacted)),
@@ -800,9 +800,9 @@ def scan_history(files: Sequence[Path], report: ScanReport) -> None:
         text = safe_read_text(path)
         if not text or not LITELLM_RE.search(text):
             continue
-        severity = "medium" if LITELLM_IMPACTED_RE.search(text) else "info"
+        severity = "critical" if LITELLM_IMPACTED_RE.search(text) else "info"
         detail = "Shell history mentions LiteLLM"
-        if severity == "medium":
+        if severity == "critical":
             detail = "Shell history mentions impacted LiteLLM version 1.82.7 or 1.82.8"
         report.add_finding(severity, "history_reference", path, detail)
 
@@ -889,7 +889,9 @@ def scan_docker(report: ScanReport) -> None:
         if parts:
             container_ids.append(parts[0])
         lowered = line.lower()
-        if "litellm" in lowered:
+        if LITELLM_IMPACTED_RE.search(line):
+            report.add_finding("critical", "docker_reference", Path("docker://container"), "Container metadata mentions impacted LiteLLM version: {}".format(line))
+        elif "litellm" in lowered:
             report.add_finding("medium", "docker_reference", Path("docker://container"), "Container metadata mentions LiteLLM: {}".format(line))
 
     exit_code, images_out, images_err = run_command(
@@ -908,7 +910,9 @@ def scan_docker(report: ScanReport) -> None:
         parts = line.rsplit(" ", 1)
         if len(parts) == 2:
             image_ids.append(parts[1])
-        if "litellm" in line.lower():
+        if LITELLM_IMPACTED_RE.search(line):
+            report.add_finding("critical", "docker_reference", Path("docker://image"), "Image metadata mentions impacted LiteLLM version: {}".format(line))
+        elif "litellm" in line.lower():
             report.add_finding("medium", "docker_reference", Path("docker://image"), "Image metadata mentions LiteLLM: {}".format(line))
 
     inspect_targets = container_ids + image_ids
@@ -923,7 +927,7 @@ def scan_docker(report: ScanReport) -> None:
     if IOC_DOMAIN in inspect_out:
         report.add_finding("critical", "docker_ioc", Path("docker://inspect"), "Docker inspect output contains known IOC domain")
     elif LITELLM_IMPACTED_RE.search(inspect_out):
-        report.add_finding("medium", "docker_ioc", Path("docker://inspect"), "Docker inspect output references impacted LiteLLM versions")
+        report.add_finding("critical", "docker_ioc", Path("docker://inspect"), "Docker inspect output references impacted LiteLLM versions")
     elif LITELLM_RE.search(inspect_out):
         report.add_finding("info", "docker_reference", Path("docker://inspect"), "Docker inspect output references LiteLLM")
 
@@ -990,7 +994,7 @@ def report_to_markdown(report: ScanReport) -> str:
         [
             "## Interpretation",
             "",
-            "- `critical`: known IOC or impacted installed version",
+            "- `critical`: known IOC or any detected reference to LiteLLM 1.82.7 or 1.82.8",
             "- `medium`: suspicious historical evidence that needs review",
             "- `info`: LiteLLM was present, but no known IOC matched",
         ]
@@ -1040,7 +1044,7 @@ def summarize(report: ScanReport) -> str:
         lines.append("No LiteLLM IOC findings were detected in the scanned paths.")
     else:
         lines.append("Interpretation:")
-        lines.append("  - critical: known IOC or impacted installed version")
+        lines.append("  - critical: known IOC or any detected reference to LiteLLM 1.82.7 or 1.82.8")
         lines.append("  - medium: suspicious historical evidence that needs review")
         lines.append("  - info: LiteLLM was present, but no known IOC matched")
     return "\n".join(lines)

@@ -68,9 +68,11 @@ py -3 findlitellm.py --docker
 
 ## 严重级别
 
-- `critical`：命中已知 IOC 或受影响版本已安装
+- `critical`：命中已知 IOC，或任何位置检测到 LiteLLM `1.82.7` / `1.82.8`
 - `medium`：存在可疑历史痕迹，建议继续复核
 - `info`：发现过 LiteLLM，但没有命中已知 IOC
+
+也就是说，现在不仅“已安装受影响版本”会升为 `critical`，只要在依赖文件、缓存、shell 历史或 Docker 元数据里发现 `1.82.7` / `1.82.8`，也会直接按报警级别处理。
 
 退出码：
 
